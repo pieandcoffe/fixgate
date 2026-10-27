@@ -11,8 +11,13 @@ add_library(fixgate_warnings INTERFACE)
 target_compile_options(fixgate_warnings INTERFACE
         -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion -Werror)
 
+# Header-only codec library: linking it adds include/ to the include path.
+add_library(fixgate_codec INTERFACE)
+add_library(fixgate::codec ALIAS fixgate_codec)
+target_include_directories(fixgate_codec INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
 add_executable(fixgate src/main.cpp)
-target_link_libraries(fixgate PRIVATE fixgate_warnings)
+target_link_libraries(fixgate PRIVATE fixgate::codec fixgate_warnings)
 
 # Unit tests are picked up automatically from the tests/ folder
 option(FIXGATE_BUILD_TESTS "Build unit tests" ON)
